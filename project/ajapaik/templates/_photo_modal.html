@@ -217,7 +217,7 @@
                 <!-- start of toolbox block -->
                 <div class="row ajp-dater-hide-when-dater-visible">
                     <div class="ajapaik-margin-top-5">
-{% if is_frontpage == False or is_game or is_mapview %}
+{% if not is_frontpage and not is_photoview or is_game or is_mapview %}
                         <a id="ajapaik-photo-modal-specify-location" class="no-text-decoration pull-left" data-id="{{ photo.id }}" title="{% trans "Pick the shooting location!" %}" href="#">
                             <i class="material-icons notranslate ajapaik-text-gray ajapaik-icon-48">add_location</i>
                         </a>
