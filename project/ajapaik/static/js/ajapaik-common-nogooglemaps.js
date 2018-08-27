@@ -1048,6 +1048,17 @@ if (typeof(google) !== "undefined" && typeof(google.maps) !== "undefined")
         if (window.showPhotoMapIfApplicable) {
             window.showPhotoMapIfApplicable();
         }
+        else
+        {
+            if (window.photoModalPhotoLat && window.photoModalPhotoLng) {
+                $('#ajapaik-modal-photo-container-container').removeClass('col-xs-12').addClass('col-xs-9');
+                $('#ajapaik-photo-modal-map-container').show();
+                if (typeof(window.ajapaikminimap) !== "undefined" && typeof(window.ajapaikminimap.invalidateSize) === "function")
+                {
+                    window.ajapaikminimap.invalidateSize();
+                }
+            }
+        }
     });
     $(document).on('click', '#ajapaik-grab-link', function (e) {
         e.stopPropagation();
