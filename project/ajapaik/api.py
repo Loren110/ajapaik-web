@@ -342,23 +342,29 @@ class FinnaNearestPhotos(CustomAuthenticationMixin, CustomParsersMixin, APIView)
         if form.is_valid():
             lon=round(form.cleaned_data["longitude"], 4)
             lat=round(form.cleaned_data["latitude"], 4)
+            print >>sys.stderr, ('query %s' % form.cleaned_data["query"])
 
-
-            finna_result=requests.get(self.search_url, {
-#               'lookfor': cleaned_data['fullSearch'],
-#               'type': 'AllFields',
-                'limit': self.page_size,
-                'lng': 'en-gb',
-                'streetsearch' : 1,
-                'field[]': ['id', 'title', 'images', 'imageRights', 'authors', 'source', 'geoLocations', 'recordPage',
-                        'year', 'summary', 'rawData'],
-                'filter[]': [
+            finna_filters = [
                     'free_online_boolean:"1"',
                     '~format:"0/Place/"',
                     '~format:"0/Image/"',
                     '~usage_rights_str_mv:"usage_B"',
                     '{!geofilt sfield=location_geo pt=%f,%f d=0.1}' % (lat, lon)
-                ],
+                ]
+
+            finna_fake_album=form.cleaned_data["album"] 
+            if finna_fake_album == "1918":
+                finna_filters.append('~era_facet:"1918"')
+
+            finna_result=requests.get(self.search_url, {
+                'lookfor': form.cleaned_data["query"],
+                'type': 'AllFields',
+                'limit': self.page_size,
+                'lng': 'en-gb',
+                'streetsearch' : 1,
+                'field[]': ['id', 'title', 'images', 'imageRights', 'authors', 'source', 'geoLocations', 'recordPage',
+                        'year', 'summary', 'rawData'],
+                'filter[]': finna_filters
                 })
 
             photos=[]
@@ -754,7 +760,7 @@ class ToggleUserFavoritePhoto(CustomAuthenticationMixin, CustomParsersMixin, API
 
     def post(self, request, format=None):
         form = forms.ApiToggleFavoritePhotoForm(request.data)
-        
+
         photo = None
 
         if form.is_valid():
