@@ -350,7 +350,7 @@ class FinnaNearestPhotos(CustomAuthenticationMixin, CustomParsersMixin, APIView)
             finna_filters.append('~era_facet:"1918"')
 
 
-        finna_result_json=get(self.search_url, {
+        finna_result_json=requests.get(self.search_url, {
             'lookfor': query,
             'type': 'AllFields',
             'limit': self.page_size,
