@@ -1027,7 +1027,7 @@ class PhotosWithUserRephotos(CustomAuthenticationMixin, CustomParsersMixin, APIV
 
             photos = Photo.objects.filter(
                      rephotos__user=user_profile
-                 ).order_by('-created')[start:end]
+                 ).order_by('created')[start:end]
 
             photos = serializers.PhotoSerializer.annotate_photos(
                 photos,
