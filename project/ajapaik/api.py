@@ -413,7 +413,6 @@ class FinnaNearestPhotos(CustomAuthenticationMixin, CustomParsersMixin, APIView)
 
             return Response({
                 'error': RESPONSE_STATUSES['OK'],
-#               'photos': finna_result.json()
                 'photos': photos
             })
         else:
@@ -484,7 +483,7 @@ class AlbumNearestPhotos(CustomAuthenticationMixin, CustomParsersMixin, APIView)
                         geography__distance_lte=(ref_location, D(m=nearby_range))
                     ) \
                     .distance(ref_location) \
-                    .order_by('distance')[start:end] \
+                    .order_by('distance')[start:end]
 
                 photos = serializers.PhotoSerializer.annotate_photos(
                     photos,
