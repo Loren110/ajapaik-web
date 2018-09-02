@@ -37,9 +37,7 @@ from project.ajapaik.settings import API_DEFAULT_NEARBY_PHOTOS_RANGE, \
     FACEBOOK_APP_ID
 
 import sys
-
-from project.ajapaik.curator_drivers.finna import find_finna_photo_by_url, import_finna_photo
-
+from project.ajapaik.curator_drivers.finna import finna_find_photo_by_url
 
 log = logging.getLogger(__name__)
 
@@ -591,7 +589,7 @@ class RephotoUpload(CustomAuthenticationMixin, CustomParsersMixin, APIView):
                     pk=id
                 ).first()
             else:
-                photo = find_finna_photo_by_url(id, user_profile)
+                photo = finna_find_photo_by_url(id, user_profile)
 
             if not photo:
                 print >>sys.stderr, ('rephotoupload failed')
@@ -688,6 +686,29 @@ class RephotoUpload(CustomAuthenticationMixin, CustomParsersMixin, APIView):
             original_photo.latest_rephoto = new_rephoto.created
             if not original_photo.first_rephoto:
                 original_photo.first_rephoto = new_rephoto.created
+
+            if latitude and longitude:
+                rephoto_geotag = GeoTag(
+                    lat=latitude,
+                    lon=longitude,
+                    origin=GeoTag.REPHOTO,
+                    type=GeoTag.ANDROIDAPP,
+                    map_type=GeoTag.NO_MAP,
+                    photo=original_photo,
+                    trustworthiness=0,
+                    is_correct=False,
+                    geography=geography,
+                    photo_flipped=is_rephoto_flipped,
+                )
+                rephoto_geotag.save()
+                # Investigate why this will always set geotag.is_correct=True 
+                # original_photo.set_calculated_fields()
+                original_photo.latest_geotag = new_rephoto.created
+                for a in original_photo.albums.all():
+                    qs = a.get_geotagged_historic_photo_queryset_with_subalbums()
+                    a.geotagged_photo_count_with_subalbums = qs.count()
+                    a.save()
+
             original_photo.save()
             user_profile.update_rephoto_score()
             user_profile.save()
@@ -783,7 +804,7 @@ class ToggleUserFavoritePhoto(CustomAuthenticationMixin, CustomParsersMixin, API
                     pk=id
                 ).first()
             else:
-                photo = find_finna_photo_by_url(id, user_profile)
+                photo = finna_find_photo_by_url(id, user_profile)
 
             if photo :
                 is_favorited = form.cleaned_data['favorited']
