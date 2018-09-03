@@ -31,7 +31,7 @@ from sorl.thumbnail import get_thumbnail
 
 from project.ajapaik import forms
 from project.ajapaik import serializers
-from project.ajapaik.models import Album, Photo, Profile, Licence, PhotoLike
+from project.ajapaik.models import Album, Photo, Profile, Licence, PhotoLike, GeoTag
 from project.ajapaik.settings import API_DEFAULT_NEARBY_PHOTOS_RANGE, \
     API_DEFAULT_NEARBY_MAX_PHOTOS, FACEBOOK_APP_SECRET, GOOGLE_CLIENT_ID, \
     FACEBOOK_APP_ID
